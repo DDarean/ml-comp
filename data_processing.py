@@ -1,15 +1,19 @@
 import json
+import os
 import pickle
 import time
 from datetime import datetime
 
 import pandas
 import requests
+from dotenv import load_dotenv
 
 
 def request_raw_data():
-    request_url = 'https://slot-ml.com/api/v1/users/' \
-                  'eade5a348b246aa623e21fd044863764247b1438/vectors/?random'
+    load_dotenv()
+    key = os.getenv('API_KEY')
+    request_url = f'https://slot-ml.com/api/v1/users/' \
+                  f'{key}/vectors/?random'
     res = requests.get(request_url)
     if res.status_code != 200:
         return False
@@ -24,7 +28,7 @@ def gather_data(n):
         if not data:
             break
         gathered_data.append(data)
-        time.sleep(0.3)
+        time.sleep(0.1)
     print(f'Downloaded: {len(gathered_data)}')
 
     return gathered_data
@@ -35,3 +39,12 @@ def convert_save_dataframe(filename, lst):
     cur_time = datetime.now().strftime("%H-%M-%S")
     with open(f'{filename}_{cur_time}_size {df.shape[0]}.pkl', 'wb') as file:
         pickle.dump(df, file)
+
+
+def load_dataframe(filepath='.'):
+    with open(filepath, 'rb') as f:
+        df = pickle.load(f)
+    if 'meta1' in df.columns and 'vector' in df.columns:
+        return df
+    else:
+        raise ValueError('Incorrect dataframe')
