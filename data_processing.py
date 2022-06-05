@@ -48,3 +48,14 @@ def load_dataframe(filepath='.'):
         return df
     else:
         raise ValueError('Incorrect dataframe')
+
+
+def request_stats():
+    load_dotenv()
+    key = os.getenv('API_KEY')
+    request_url = f'https://slot-ml.com//api/v1/users/{key}/stats'
+    res = requests.get(request_url)
+    if res.status_code != 200:
+        print(res.text)
+        return False
+    return json.loads(res.text)
