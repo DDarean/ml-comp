@@ -4,13 +4,11 @@ import time
 import pandas as pd
 import streamlit as st
 
-from data_processing import (convert_save_dataframe, gather_data,
-                             upload_predictions)
-from model import predict
+from utils.data_processing import (convert_save_dataframe, gather_data,
+                                   upload_predictions)
+from utils.model import predict
 
 st.sidebar.markdown("# Main page")
-
-st.write('Load model and vectorizers')
 
 num_iter = st.text_input(label='number of iterations')
 num_vectors = st.text_input(label='number of vectors per iteration')
