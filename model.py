@@ -43,5 +43,8 @@ def predict(df, vectorzr_meta, vectorzr_vector, model):
     df = pd.concat([df['id'].reset_index(drop=True), pd.Series(pred)],
                    axis=1, ignore_index=False)
     df.rename(columns={0: "class"}, inplace=True)
+    df[df['class'] == 0] = 50
+    assert df['class'].min() > 0
+    assert df['class'].max() <= 50
 
     return df
