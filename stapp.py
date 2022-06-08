@@ -28,9 +28,11 @@ if st.button(label='Load predictions'):
     if num_iter and num_vectors:
         num_iter = int(num_iter)
         num_vectors = int(num_vectors)
-
+        message = st.empty()
+        total_processed = 0
         for i in range(num_iter):
             gather_5 = gather_data(num_vectors)
+            total_processed += len(gather_5)
             if len(gather_5) == 0:
                 with st.spinner('Sleeping'):
                     time.sleep(1800)
@@ -38,11 +40,12 @@ if st.button(label='Load predictions'):
             convert_save_dataframe(f'{i}-cycle5', gather_5)
             pred = predict(pd.DataFrame(gather_5), vectorizer_meta,
                            vectorizer_vector, model)
-
             upload_predictions(pred)
-            with st.empty():
+            with message.container():
                 st.write(f'Iteration {i} complete')
+                st.write(f'Vectors uploaded: {total_processed}')
         st.write('DONE')
+        st.write(f'Number of uploaded vectors: {total_processed}')
     else:
         st.write('Enter num of iterations')
 
