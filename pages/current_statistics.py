@@ -1,11 +1,26 @@
+import pandas as pd
+import plotly.express as px
 import streamlit as st
 
-from utils.data_processing import request_stats
+from utils.utils import get_statistics, save_statistics
 
-st.markdown("# Current status")
 
-stats = request_stats()
-stats = stats['stats'][0]
+def main():
+    st.markdown("# Current status")
+    stat = get_statistics()
+    if get_statistics():
+        df = pd.DataFrame(stat)
+        param = st.selectbox('Select parameter', options=[col for col
+                                                          in df.columns
+                                                          if col not in
+                                                          ['id', 'timestamp']])
+        fig = px.line(df, x="timestamp", y=param, markers=True)
+        st.plotly_chart(fig)
 
-for stat, value in stats.items():
-    st.write(f'{stat}: {value}')
+        if st.button('Update stats'):
+            save_statistics()
+    else:
+        st.write('Try again')
+
+if __name__ == '__main__':
+    main()
