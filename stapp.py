@@ -2,16 +2,27 @@ import pickle
 import time
 
 import pandas as pd
+import plotly.express as px
 import streamlit as st
 
 from utils.data_processing import (convert_save_dataframe, gather_data,
                                    upload_predictions)
 from utils.model import predict
+from utils.utils import get_statistics
 
-st.sidebar.markdown("# Main page")
+st.markdown('### Accuracy history')
+st.markdown('For detailed stats refer page "Current statistics"')
+
+stat = get_statistics()
+df = pd.DataFrame(stat)
+fig = px.line(df, x='timestamp', y='avg_accuracy', markers=True, width=600, height=400)
+st.plotly_chart(fig)
+
+st.markdown('### Gather new vectors')
 
 num_iter = st.text_input(label='number of iterations')
 num_vectors = st.text_input(label='number of vectors per iteration')
+
 
 if st.button(label='Load predictions'):
     with open('../experiments/model-new.pkl', 'rb') as f:

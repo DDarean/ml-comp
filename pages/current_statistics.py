@@ -6,7 +6,7 @@ from utils.utils import get_statistics, save_statistics
 
 
 def main():
-    st.markdown("# Current status")
+    st.markdown("### Current status")
     stat = get_statistics()
     if get_statistics():
         df = pd.DataFrame(stat)
@@ -21,6 +21,7 @@ def main():
             save_statistics()
     else:
         st.write('Try again')
+
 
 if __name__ == '__main__':
     main()

@@ -8,6 +8,7 @@ import pandas
 import requests
 import streamlit as st
 from dotenv import load_dotenv
+from sqlalchemy import MetaData, Table, create_engine, insert
 
 
 def request_raw_data():
@@ -28,9 +29,10 @@ def gather_data(n):
         data = (request_raw_data())
         if not data:
             break
+        save_vector(data)
         gathered_data.append(data)
         time.sleep(0.1)
-    print(f'Downloaded: {len(gathered_data)}')
+    print(f'Downloaded and saved: {len(gathered_data)}')
 
     return gathered_data
 
@@ -75,3 +77,12 @@ def upload_predictions(df):
             with st.spinner('Sleeping - sending error'):
                 time.sleep(60)
         time.sleep(0.1)
+
+
+def save_vector(vector):
+    engine = create_engine("sqlite+pysqlite:///test_data/db.sqlite")
+    metadata_obj = MetaData()
+    user_table = Table("vectors", metadata_obj, autoload_with=engine)
+    stmt = insert(user_table).values(**vector)
+    with engine.connect() as conn:
+        conn.execute(stmt)

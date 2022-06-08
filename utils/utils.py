@@ -22,7 +22,7 @@ def save_statistics():
         with engine.connect() as conn:
             conn.execute(stmt)
     else:
-        st.write('No updates')
+        st.write('No updates, upload new vectors first')
 
 
 def get_statistics():
@@ -33,4 +33,3 @@ def get_statistics():
     with engine.connect() as conn:
         result = conn.execute(stmt)
         return result.all()
-
