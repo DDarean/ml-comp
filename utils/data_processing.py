@@ -97,7 +97,7 @@ def save_statistics():
     st.write(for_insert)
     for_insert['timestamp'] = datetime.now()
 
-    last_stat = get_table_data()
+    last_stat = get_table_data('stats')
 
     if last_stat[-1][2] != for_insert['total_vectors']:
         stmt = insert(user_table).values(**for_insert)

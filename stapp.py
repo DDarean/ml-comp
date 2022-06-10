@@ -22,11 +22,15 @@ st.markdown('### Gather new vectors')
 num_iter = st.text_input(label='number of iterations')
 num_vectors = st.text_input(label='number of vectors per iteration')
 
+models_list = pd.DataFrame(get_table_data('models'))
+name = st.selectbox(label='Select model',
+                          options=models_list['model_name'].unique())
+
 
 if st.button(label='Load predictions'):
-    model_name = '../experiments/model-new.pkl'
-    vectorizer_meta = '../experiments/vectorizer_meta-new.pkl'
-    vectorizer_vector = '../experiments/vectorizer_vector-new.pkl'
+    model_name = f'models/{name}.pkl'
+    vectorizer_meta = f'models/vectorizers/{name}-meta.pkl'
+    vectorizer_vector = f'models/vectorizers/{name}-vctr.pkl'
 
     if num_iter and num_vectors:
         num_iter = int(num_iter)
