@@ -5,13 +5,13 @@ import plotly.express as px
 import streamlit as st
 
 from utils.data_processing import (convert_save_dataframe, gather_data,
-                                   get_statistics, upload_predictions)
+                                   get_table_data, upload_predictions)
 from utils.model import Kmeans
 
 st.markdown('### Accuracy history')
 st.markdown('For detailed stats refer page "Current statistics"')
 
-stat = get_statistics()
+stat = get_table_data('stats')
 df = pd.DataFrame(stat)
 fig = px.line(df, x='total_vectors', y='avg_accuracy',
               markers=True, width=600, height=400)

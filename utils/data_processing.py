@@ -97,7 +97,7 @@ def save_statistics():
     st.write(for_insert)
     for_insert['timestamp'] = datetime.now()
 
-    last_stat = get_statistics()
+    last_stat = get_table_data()
 
     if last_stat[-1][2] != for_insert['total_vectors']:
         stmt = insert(user_table).values(**for_insert)
@@ -107,21 +107,11 @@ def save_statistics():
         st.write('No updates, upload new vectors first')
 
 
-def get_statistics():
+def get_table_data(table_name):
     engine = create_engine("sqlite+pysqlite:///test_data/db.sqlite")
     metadata_obj = MetaData()
-    user_table = Table("stats", metadata_obj, autoload_with=engine)
+    user_table = Table(table_name, metadata_obj, autoload_with=engine)
     stmt = (select(user_table).order_by(user_table.c.id.asc()))
-    with engine.connect() as conn:
-        result = conn.execute(stmt)
-        return result.all()
-
-
-def get_latest_data():
-    engine = create_engine("sqlite+pysqlite:///test_data/db.sqlite")
-    metadata_obj = MetaData()
-    user_table = Table("vectors", metadata_obj, autoload_with=engine)
-    stmt = (select(user_table))
     with engine.connect() as conn:
         result = conn.execute(stmt)
         return result.all()

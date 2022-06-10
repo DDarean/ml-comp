@@ -1,7 +1,7 @@
 import pandas as pd
 import streamlit as st
 
-from utils.data_processing import get_latest_data, save_model_name
+from utils.data_processing import get_table_data, save_model_name
 from utils.model import Kmeans
 
 
@@ -10,7 +10,7 @@ def main():
 
     if st.button(label='Train on the latest data'):
         model = Kmeans()
-        data = get_latest_data()
+        data = get_table_data('vectors')
         df = pd.DataFrame(data)
         model.fit_save_model(df)
         save_model_name(model.model_name)

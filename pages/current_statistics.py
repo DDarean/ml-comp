@@ -2,13 +2,13 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
-from utils.data_processing import get_statistics, save_statistics
+from utils.data_processing import get_table_data, save_statistics
 
 
 def main():
     st.markdown("### Current status")
-    stat = get_statistics()
-    if get_statistics():
+    stat = get_table_data('stats')
+    if get_table_data('stats'):
         df = pd.DataFrame(stat)
         options = ['avg_accuracy', 'avg_false_positive_ratio',
                    'avg_false_negative_ratio', 'avg_user_level',
