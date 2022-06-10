@@ -1,4 +1,3 @@
-import pickle
 import time
 
 import pandas as pd
@@ -7,7 +6,7 @@ import streamlit as st
 
 from utils.data_processing import (convert_save_dataframe, gather_data,
                                    upload_predictions)
-from utils.model import predict
+from utils.model import Kmeans
 from utils.utils import get_statistics
 
 st.markdown('### Accuracy history')
@@ -15,7 +14,8 @@ st.markdown('For detailed stats refer page "Current statistics"')
 
 stat = get_statistics()
 df = pd.DataFrame(stat)
-fig = px.line(df, x='timestamp', y='avg_accuracy', markers=True, width=600, height=400)
+fig = px.line(df, x='timestamp', y='avg_accuracy',
+              markers=True, width=600, height=400)
 st.plotly_chart(fig)
 
 st.markdown('### Gather new vectors')
@@ -25,16 +25,9 @@ num_vectors = st.text_input(label='number of vectors per iteration')
 
 
 if st.button(label='Load predictions'):
-    with open('../experiments/model-new.pkl', 'rb') as f:
-        model = pickle.load(f)
-
-    with open('../experiments/vectorizer_meta-new.pkl', 'rb') as f:
-        vectorizer_meta = pickle.load(f)
-
-    with open('../experiments/vectorizer_vector-new.pkl', 'rb') as f:
-        vectorizer_vector = pickle.load(f)
-
-    st.write('Model and vectorizers loaded')
+    model_name = '../experiments/model-new.pkl'
+    vectorizer_meta = '../experiments/vectorizer_meta-new.pkl'
+    vectorizer_vector = '../experiments/vectorizer_vector-new.pkl'
 
     if num_iter and num_vectors:
         num_iter = int(num_iter)
@@ -49,8 +42,8 @@ if st.button(label='Load predictions'):
                     time.sleep(1800)
                 continue
             convert_save_dataframe(f'{i}-cycle5', gather_5)
-            pred = predict(pd.DataFrame(gather_5), vectorizer_meta,
-                           vectorizer_vector, model)
+            model = Kmeans()
+            pred = model.pred(pd.DataFrame(gather_5), model_name, vectorizer_meta, vectorizer_vector)
             upload_predictions(pred)
             with message.container():
                 st.write(f'Iteration {i} complete')
