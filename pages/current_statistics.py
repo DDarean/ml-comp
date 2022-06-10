@@ -10,11 +10,11 @@ def main():
     stat = get_statistics()
     if get_statistics():
         df = pd.DataFrame(stat)
-        param = st.selectbox('Select parameter', options=[col for col
-                                                          in df.columns
-                                                          if col not in
-                                                          ['id', 'timestamp']])
-        fig = px.line(df, x="timestamp", y=param, markers=True)
+        options = ['avg_accuracy', 'avg_false_positive_ratio',
+                   'avg_false_negative_ratio', 'avg_user_level',
+                   'avg_spent_time', 'total_results', 'classify_data_ratio']
+        param = st.selectbox('Select parameter', options=options)
+        fig = px.line(df, x="total_vectors", y=param, markers=True)
         st.plotly_chart(fig)
 
         if st.button('Update stats'):

@@ -14,7 +14,7 @@ st.markdown('For detailed stats refer page "Current statistics"')
 
 stat = get_statistics()
 df = pd.DataFrame(stat)
-fig = px.line(df, x='timestamp', y='avg_accuracy',
+fig = px.line(df, x='total_vectors', y='avg_accuracy',
               markers=True, width=600, height=400)
 st.plotly_chart(fig)
 
