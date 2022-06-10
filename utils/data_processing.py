@@ -103,6 +103,7 @@ def save_statistics():
         stmt = insert(user_table).values(**for_insert)
         with engine.connect() as conn:
             conn.execute(stmt)
+        st.write('Reload page')
     else:
         st.write('No updates, upload new vectors first')
 
