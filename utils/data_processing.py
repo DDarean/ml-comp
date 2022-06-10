@@ -115,3 +115,22 @@ def get_statistics():
     with engine.connect() as conn:
         result = conn.execute(stmt)
         return result.all()
+
+
+def get_latest_data():
+    engine = create_engine("sqlite+pysqlite:///test_data/db.sqlite")
+    metadata_obj = MetaData()
+    user_table = Table("vectors", metadata_obj, autoload_with=engine)
+    stmt = (select(user_table))
+    with engine.connect() as conn:
+        result = conn.execute(stmt)
+        return result.all()
+
+
+def save_model_name(model_name):
+    engine = create_engine("sqlite+pysqlite:///test_data/db.sqlite")
+    metadata_obj = MetaData()
+    user_table = Table("models", metadata_obj, autoload_with=engine)
+    stmt = insert(user_table).values(model_name=model_name)
+    with engine.connect() as conn:
+        conn.execute(stmt)
