@@ -12,6 +12,7 @@ class Kmeans:
         self.vectorizer_vector = TfidfVectorizer()
         self.model = KMeans(n_clusters=50, random_state=42)
         self.model_flag = False
+        self.model_name = ''
 
     def fit_save_model(self, df, modelname='KMeans'):
         try:
@@ -24,11 +25,12 @@ class Kmeans:
         data = hstack((x_meta, x_vector))
         self.model.fit(data)
         self.model_flag = True
-        self.save_model(self.model, f'models/{modelname}-{df.shape[0]}.pkl')
+        self.model_name = f'{modelname}-{df.shape[0]}'
+        self.save_model(self.model, f'models/{self.model_name}.pkl')
         self.save_model(self.vectorizer_meta,
-                        f'models/vectorizers/{modelname}-{df.shape[0]}-meta.pkl')
+                        f'models/vectorizers/{self.model_name}-meta.pkl')
         self.save_model(self.vectorizer_vector,
-                        f'models/vectorizers/{modelname}-{df.shape[0]}-vctr.pkl')
+                        f'models/vectorizers/{self.model_name}-vctr.pkl')
 
     def save_model(self, obj, filename):
         if self.model_flag:

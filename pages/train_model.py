@@ -13,7 +13,7 @@ def main():
         data = get_latest_data()
         df = pd.DataFrame(data)
         model.fit_save_model(df)
-        save_model_name('testtest')
+        save_model_name(model.model_name)
         st.write('Model retrained and saved in "models" folder')
 
 
