@@ -5,9 +5,8 @@ import plotly.express as px
 import streamlit as st
 
 from utils.data_processing import (convert_save_dataframe, gather_data,
-                                   upload_predictions)
+                                   get_statistics, upload_predictions)
 from utils.model import Kmeans
-from utils.utils import get_statistics
 
 st.markdown('### Accuracy history')
 st.markdown('For detailed stats refer page "Current statistics"')

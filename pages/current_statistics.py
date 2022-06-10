@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
-from utils.utils import get_statistics, save_statistics
+from utils.data_processing import get_statistics, save_statistics
 
 
 def main():

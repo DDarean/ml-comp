@@ -24,11 +24,11 @@ class Kmeans:
         data = hstack((x_meta, x_vector))
         self.model.fit(data)
         self.model_flag = True
-        self.save_model(self.model, f'{modelname}-{df.shape[0]}.pkl')
+        self.save_model(self.model, f'models/{modelname}-{df.shape[0]}.pkl')
         self.save_model(self.vectorizer_meta,
-                        f'{modelname}-{df.shape[0]}-meta.pkl')
+                        f'models/vectorizers/{modelname}-{df.shape[0]}-meta.pkl')
         self.save_model(self.vectorizer_vector,
-                        f'{modelname}-{df.shape[0]}-vctr.pkl')
+                        f'models/vectorizers/{modelname}-{df.shape[0]}-vctr.pkl')
 
     def save_model(self, obj, filename):
         if self.model_flag:
