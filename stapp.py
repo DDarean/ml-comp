@@ -1,14 +1,15 @@
+import pickle
 import time
 
+import pandas
 import pandas as pd
 import plotly.express as px
 import streamlit as st
+import torch
 
 from utils.data_processing import (convert_save_dataframe, gather_data,
                                    get_table_data, upload_predictions)
 from utils.model import Preprocessor
-import pickle, pandas, torch
-from utils.model_nn import Autoencoder
 
 st.markdown('### Accuracy history')
 st.markdown('For detailed stats refer page "Current statistics"')
