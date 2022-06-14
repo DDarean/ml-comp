@@ -7,7 +7,8 @@ import streamlit as st
 from utils.data_processing import (convert_save_dataframe, gather_data,
                                    get_table_data, upload_predictions)
 from utils.model import Preprocessor
-import pickle, pandas
+import pickle, pandas, torch
+from utils.model_nn import Autoencoder
 
 st.markdown('### Accuracy history')
 st.markdown('For detailed stats refer page "Current statistics"')
@@ -26,12 +27,13 @@ num_vectors = st.text_input(label='number of vectors per iteration')
 models_list = pd.DataFrame(get_table_data('models'))
 name = st.selectbox(label='Select model',
                           options=models_list['model_name'].unique())
-
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 if st.button(label='Load predictions'):
-    model_name = 'models/KMeans-2950.pkl'
-    vectorizer_meta = f'models/vectorizers/vector-meta-2950.pkl'
-    vectorizer_vector = f'models/vectorizers/vector-vector2950.pkl'
+    model_name = 'models/kmeans_for_ae.pkl'
+    model_ae_name = 'models/AEmodel'
+    vectorizer_meta = f'models/vectorizers/vectorizer_meta_for_ae.pkl'
+    vectorizer_vector = f'models/vectorizers/vectorizer_vector_for_ae.pkl'
 
     if num_iter and num_vectors:
         num_iter = int(num_iter)
@@ -51,7 +53,11 @@ if st.button(label='Load predictions'):
             data = preprocessor.transform_data(df, vectorizer_meta, vectorizer_vector, load=True)
             with open(model_name, 'rb') as f:
                 model = pickle.load(f)
-            pred = model.pred(df, data)
+            model_ae = torch.load(model_ae_name)
+            data = data.toarray()
+            encoded = model_ae.encode(torch.from_numpy(data).float().to(device))
+            detached = encoded.cpu().detach().numpy()
+            pred = model.pred(df, detached)
             upload_predictions(pred)
             with message.container():
                 st.write(f'Iteration {i} complete')
