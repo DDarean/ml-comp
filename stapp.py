@@ -6,7 +6,8 @@ import streamlit as st
 
 from utils.data_processing import (convert_save_dataframe, gather_data,
                                    get_table_data, upload_predictions)
-from utils.model import Kmeans
+from utils.model import Preprocessor
+import pickle, pandas
 
 st.markdown('### Accuracy history')
 st.markdown('For detailed stats refer page "Current statistics"')
@@ -28,9 +29,9 @@ name = st.selectbox(label='Select model',
 
 
 if st.button(label='Load predictions'):
-    model_name = f'models/{name}.pkl'
-    vectorizer_meta = f'models/vectorizers/{name}-meta.pkl'
-    vectorizer_vector = f'models/vectorizers/{name}-vctr.pkl'
+    model_name = 'models/KMeans-2950.pkl'
+    vectorizer_meta = f'models/vectorizers/vector-meta-2950.pkl'
+    vectorizer_vector = f'models/vectorizers/vector-vector2950.pkl'
 
     if num_iter and num_vectors:
         num_iter = int(num_iter)
@@ -45,8 +46,12 @@ if st.button(label='Load predictions'):
                     time.sleep(1800)
                 continue
             convert_save_dataframe(f'{i}-cycle5', gather_5)
-            model = Kmeans()
-            pred = model.pred(pd.DataFrame(gather_5), model_name, vectorizer_meta, vectorizer_vector)
+            preprocessor = Preprocessor()
+            df = pandas.DataFrame(gather_5)
+            data = preprocessor.transform_data(df, vectorizer_meta, vectorizer_vector, load=True)
+            with open(model_name, 'rb') as f:
+                model = pickle.load(f)
+            pred = model.pred(df, data)
             upload_predictions(pred)
             with message.container():
                 st.write(f'Iteration {i} complete')

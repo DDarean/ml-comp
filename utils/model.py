@@ -17,7 +17,7 @@ class Kmeans:
         self.model_flag = True
         self.model_name = f'{modelname}-{data.shape[0]}'
         with open(f'models/{self.model_name}.pkl', 'wb') as f:
-            pickle.dump(self.model, f)
+            pickle.dump(self, f)
 
     def pred(self, df, data):
         pred = self.model.predict(data)
@@ -48,18 +48,18 @@ class Preprocessor:
         with open(f'models/vectorizers/vector-vector{df.shape[0]}.pkl', 'wb') as f:
             pickle.dump(self.vectorizer_vector, f)
 
-    @staticmethod
-    def transform_data(df):
+    def transform_data(self, df, vect_meta='', vect_vector='', load=False):
         try:
             meta1 = df['meta1']
             vector = df['vector']
         except ValueError:
             raise ValueError
-        with open(f'models/vectorizers/vector-meta-{df.shape[0]}.pkl', 'rb') as f:
-            vectorizer_meta = pickle.load(f)
-        with open(f'models/vectorizers/vector-vector{df.shape[0]}.pkl', 'rb') as f:
-            vectorizer_vector = pickle.load(f)
-        x_meta = vectorizer_meta.transform(meta1)
-        x_vector = vectorizer_vector.transform(vector)
+        if load:
+            with open(vect_meta, 'rb') as f:
+                self.vectorizer_meta = pickle.load(f)
+            with open(vect_vector, 'rb') as f:
+                self.vectorizer_vector = pickle.load(f)
+        x_meta = self.vectorizer_meta.transform(meta1)
+        x_vector = self.vectorizer_vector.transform(vector)
         data = hstack((x_meta, x_vector))
         return data
