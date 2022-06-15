@@ -22,11 +22,13 @@ def main():
         preprocessor.fit_save_vectorizers(data)
         data_transformed = preprocessor.transform_data(data)
         model_ae = TrainerAE(data_transformed)
-        model_ae.fit_save_model(num_of_vectors=data.shape[0])
+        with st.spinner('Training autoencoder'):
+            model_ae.fit_save_model(num_of_vectors=data.shape[0])
         st.write('AE trained')
-        model.fit_save_model(model_ae.encode(data_transformed))
+        with st.spinner('Training KMeans classifier'):
+            model.fit_save_model(model_ae.encode(data_transformed))
         save_model_name(model_name, num_of_vectors=data.shape[0])
-        st.write('Model retrained and saved in "models" folder')
+        st.write('Models trained and saved in "models" folder')
 
 
 if __name__ == '__main__':

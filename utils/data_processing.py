@@ -59,7 +59,7 @@ def request_stats():
     request_url = f'https://slot-ml.com//api/v1/users/{key}/stats'
     res = requests.get(request_url)
     if res.status_code != 200:
-        print(res.text)
+        st.write(res.text)
         return False
     return json.loads(res.text)
 
@@ -131,7 +131,7 @@ def save_model_name(model_name, num_of_vectors=0):
     metadata_obj = MetaData()
     user_table = Table("models", metadata_obj, autoload_with=engine)
     stmt = insert(user_table).values(
-        model_name=f'{model_name}+{num_of_vectors}',
+        model_name=f'{model_name}_{num_of_vectors}_vectors',
         num_of_vectors=num_of_vectors)
     with engine.connect() as conn:
         conn.execute(stmt)

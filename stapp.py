@@ -9,7 +9,7 @@ import streamlit as st
 import torch
 from dotenv import load_dotenv
 
-from utils.data_processing import (convert_save_dataframe, gather_data,
+from utils.data_processing import (gather_data,
                                    get_table_data, upload_predictions)
 from utils.models import Autoencoder, Preprocessor
 
@@ -33,9 +33,13 @@ num_iter = st.text_input(label='number of iterations')
 num_vectors = st.text_input(label='number of vectors per iteration')
 
 models_list = pd.DataFrame(get_table_data('models'))
+if models_list.shape[0] == 0:
+    st.warning('Please train a model first')
+    st.stop()
 name = st.selectbox(label='Select model',
-                          options=models_list['model_name'].unique())
-num_of_vectors = int(models_list[models_list['model_name'] == name]['num_of_vectors'].unique())
+                    options=models_list['model_name'].unique())
+num_of_vectors = int(
+    models_list[models_list['model_name'] == name]['num_of_vectors'].unique())
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 if st.button(label='Load predictions'):
@@ -59,7 +63,8 @@ if st.button(label='Load predictions'):
             # convert_save_dataframe(f'{i}-cycle5', gather_5)
             preprocessor = Preprocessor()
             df = pandas.DataFrame(gather_5)
-            data = preprocessor.transform_data(df, vectorizer_meta, vectorizer_vector, load=True)
+            data = preprocessor.transform_data(df, vectorizer_meta,
+                                               vectorizer_vector, load=True)
             with open(kmeans_path, 'rb') as f:
                 model = pickle.load(f)
             model_ae = Autoencoder(input_shape=data.shape[1])
@@ -67,7 +72,8 @@ if st.button(label='Load predictions'):
             model_ae.to(device)
             model_ae.eval()
             data = data.toarray()
-            encoded = model_ae.encode(torch.from_numpy(data).float().to(device))
+            encoded = model_ae.encode(
+                torch.from_numpy(data).float().to(device))
             detached = encoded.cpu().detach().numpy()
             pred = model.pred(df, detached)
             upload_predictions(pred)
