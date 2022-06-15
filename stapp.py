@@ -56,7 +56,7 @@ if st.button(label='Load predictions'):
                 with st.spinner('Sleeping'):
                     time.sleep(1800)
                 continue
-            convert_save_dataframe(f'{i}-cycle5', gather_5)
+            # convert_save_dataframe(f'{i}-cycle5', gather_5)
             preprocessor = Preprocessor()
             df = pandas.DataFrame(gather_5)
             data = preprocessor.transform_data(df, vectorizer_meta, vectorizer_vector, load=True)
