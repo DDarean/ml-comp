@@ -19,4 +19,4 @@
 
 Точность модели: 77.7399 %, отправлено за попытку: 1469 векторов, сложность 3
 
-![](data\screen.PNG)
+![](https://github.com/DDarean/ml-comp/tree/main/data/screen.PNG)
