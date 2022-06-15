@@ -130,7 +130,8 @@ def save_model_name(model_name, num_of_vectors=0):
     engine = create_engine(f'sqlite+pysqlite:///{db_path}')
     metadata_obj = MetaData()
     user_table = Table("models", metadata_obj, autoload_with=engine)
-    stmt = insert(user_table).values(model_name=model_name,
-                                     num_of_vectors=num_of_vectors)
+    stmt = insert(user_table).values(
+        model_name=f'{model_name}+{num_of_vectors}',
+        num_of_vectors=num_of_vectors)
     with engine.connect() as conn:
         conn.execute(stmt)

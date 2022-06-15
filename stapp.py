@@ -1,3 +1,4 @@
+import os
 import pickle
 import time
 
@@ -6,10 +7,16 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 import torch
+from dotenv import load_dotenv
 
 from utils.data_processing import (convert_save_dataframe, gather_data,
                                    get_table_data, upload_predictions)
 from utils.models import Autoencoder, Preprocessor
+
+load_dotenv()
+model_path = os.getenv('MODEL_PATH')
+vectorizer_path = os.getenv('VECTORIZER_PATH')
+model_name = os.getenv('DEFAULT_MODEL_NAME')
 
 st.markdown('### Accuracy history')
 st.markdown('For detailed stats refer page "Current statistics"')
@@ -28,13 +35,14 @@ num_vectors = st.text_input(label='number of vectors per iteration')
 models_list = pd.DataFrame(get_table_data('models'))
 name = st.selectbox(label='Select model',
                           options=models_list['model_name'].unique())
+num_of_vectors = int(models_list[models_list['model_name'] == name]['num_of_vectors'].unique())
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 if st.button(label='Load predictions'):
-    model_name = 'models/kmeans_for_ae.pkl'
-    model_ae_name = 'models/AEmodel'
-    vectorizer_meta = 'models/vectorizers/vectorizer_meta_for_ae.pkl'
-    vectorizer_vector = 'models/vectorizers/vectorizer_vector_for_ae.pkl'
+    kmeans_path = f'{model_path}/{model_name}-KMeans-{num_of_vectors}.pkl'
+    ae_path = f'{model_path}/{model_name}-AE-{num_of_vectors}.pkl'
+    vectorizer_meta = f'{vectorizer_path}/{model_name}-meta-{num_of_vectors}.pkl'
+    vectorizer_vector = f'{vectorizer_path}/{model_name}-vector-{num_of_vectors}.pkl'
 
     if num_iter and num_vectors:
         num_iter = int(num_iter)
@@ -52,10 +60,11 @@ if st.button(label='Load predictions'):
             preprocessor = Preprocessor()
             df = pandas.DataFrame(gather_5)
             data = preprocessor.transform_data(df, vectorizer_meta, vectorizer_vector, load=True)
-            with open(model_name, 'rb') as f:
+            with open(kmeans_path, 'rb') as f:
                 model = pickle.load(f)
             model_ae = Autoencoder(input_shape=data.shape[1])
-            model_ae.load_state_dict(torch.load(model_ae_name))
+            model_ae.load_state_dict(torch.load(ae_path))
+            model_ae.to(device)
             model_ae.eval()
             data = data.toarray()
             encoded = model_ae.encode(torch.from_numpy(data).float().to(device))

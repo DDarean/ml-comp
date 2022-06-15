@@ -1,11 +1,18 @@
+import os
 import pickle
 
 import pandas as pd
 import torch
+from dotenv import load_dotenv
 from scipy.sparse import hstack
 from sklearn.cluster import KMeans
 from sklearn.feature_extraction.text import TfidfVectorizer
 from torch import nn
+
+load_dotenv()
+model_path = os.getenv('MODEL_PATH')
+vectorizer_path = os.getenv('VECTORIZER_PATH')
+model_name = os.getenv('DEFAULT_MODEL_NAME')
 
 
 class Kmeans:
@@ -14,11 +21,11 @@ class Kmeans:
         self.model_flag = False
         self.model_name = ''
 
-    def fit_save_model(self, data, modelname='KMeans'):
+    def fit_save_model(self, data, modelname='AE+KMeans-KMeans'):
         self.model.fit(data)
         self.model_flag = True
         self.model_name = f'{modelname}-{data.shape[0]}'
-        with open(f'models/{self.model_name}.pkl', 'wb') as f:
+        with open(f'{model_path}/{self.model_name}.pkl', 'wb') as f:
             pickle.dump(self, f)
 
     def pred(self, df, data):
@@ -45,9 +52,9 @@ class Preprocessor:
             raise ValueError
         self.vectorizer_meta.fit(meta1)
         self.vectorizer_vector.fit(vector)
-        with open(f'models/vectorizers/vector-meta-{df.shape[0]}.pkl', 'wb') as f:
+        with open(f'{vectorizer_path}/{model_name}-meta-{df.shape[0]}.pkl', 'wb') as f:
             pickle.dump(self.vectorizer_meta, f)
-        with open(f'models/vectorizers/vector-vector{df.shape[0]}.pkl', 'wb') as f:
+        with open(f'{vectorizer_path}/{model_name}-vector-{df.shape[0]}.pkl', 'wb') as f:
             pickle.dump(self.vectorizer_vector, f)
 
     def transform_data(self, df, vect_meta='', vect_vector='', load=False):
@@ -100,7 +107,7 @@ class TrainerAE:
         self.criterion = nn.MSELoss()
         self.data = df.toarray()
 
-    def fit_save_model(self, epochs=2, modelname='AEmodel'):
+    def fit_save_model(self, epochs=1, modelname='AE+KMeans-AE', num_of_vectors=0):
         train_loader = torch.utils.data.DataLoader(
             torch.from_numpy(self.data), batch_size=128, shuffle=True,
             num_workers=8, pin_memory=True
@@ -114,7 +121,7 @@ class TrainerAE:
                 loss = self.criterion(decoded, X_batch.to(self.device))
                 loss.backward()
                 self.optimizer.step()
-        torch.save(self.model.state_dict(), f'models/{modelname}')
+        torch.save(self.model.state_dict(), f'models/{modelname}-{num_of_vectors}.pkl')
 
     def encode(self, data):
         data = data.toarray()

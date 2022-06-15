@@ -1,8 +1,14 @@
+import os
+
 import pandas as pd
 import streamlit as st
+from dotenv import load_dotenv
 
 from utils.data_processing import get_table_data, save_model_name
 from utils.models import Kmeans, Preprocessor, TrainerAE
+
+load_dotenv()
+model_name = os.getenv('DEFAULT_MODEL_NAME')
 
 
 def main():
@@ -16,10 +22,10 @@ def main():
         preprocessor.fit_save_vectorizers(data)
         data_transformed = preprocessor.transform_data(data)
         model_ae = TrainerAE(data_transformed)
-        model_ae.fit_save_model()
+        model_ae.fit_save_model(num_of_vectors=data.shape[0])
         st.write('AE trained')
         model.fit_save_model(model_ae.encode(data_transformed))
-        save_model_name('AE+KMeans', num_of_vectors=data.shape[0])
+        save_model_name(model_name, num_of_vectors=data.shape[0])
         st.write('Model retrained and saved in "models" folder')
 
 
