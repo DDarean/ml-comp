@@ -35,7 +35,7 @@ class TrainerAE:
         self.criterion = nn.MSELoss()
         self.data = df.toarray()
 
-    def fit_save_model(self, epochs=1, modelname='AEmodel'):
+    def fit_save_model(self, epochs=2, modelname='AEmodel'):
         train_loader = torch.utils.data.DataLoader(
             torch.from_numpy(self.data), batch_size=128, shuffle=True,
             num_workers=8, pin_memory=True
@@ -49,7 +49,7 @@ class TrainerAE:
                 loss = self.criterion(decoded, X_batch.to(self.device))
                 loss.backward()
                 self.optimizer.step()
-        torch.save(self.model, f'models/{modelname}')
+        torch.save(self.model.state_dict(), f'models/{modelname}')
 
     def encode(self, data):
         data = data.toarray()

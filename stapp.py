@@ -10,6 +10,7 @@ import torch
 from utils.data_processing import (convert_save_dataframe, gather_data,
                                    get_table_data, upload_predictions)
 from utils.model import Preprocessor
+from utils.model_nn import Autoencoder
 
 st.markdown('### Accuracy history')
 st.markdown('For detailed stats refer page "Current statistics"')
@@ -54,7 +55,9 @@ if st.button(label='Load predictions'):
             data = preprocessor.transform_data(df, vectorizer_meta, vectorizer_vector, load=True)
             with open(model_name, 'rb') as f:
                 model = pickle.load(f)
-            model_ae = torch.load(model_ae_name)
+            model_ae = Autoencoder(input_shape=data.shape[1])
+            model_ae.load_state_dict(torch.load(model_ae_name))
+            model_ae.eval()
             data = data.toarray()
             encoded = model_ae.encode(torch.from_numpy(data).float().to(device))
             detached = encoded.cpu().detach().numpy()

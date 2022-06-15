@@ -19,7 +19,7 @@ def main():
         model_ae = TrainerAE(data)
         model_ae.fit_save_model()
         st.write('AE trained')
-        model.fit_save_model(model_ae.encode(data))
+        model.fit_save_model(model_ae.encode(data), modelname='AE+KMeans')
         save_model_name(model.model_name)
         st.write('Model retrained and saved in "models" folder')
 
