@@ -2,8 +2,7 @@ import pandas as pd
 import streamlit as st
 
 from utils.data_processing import get_table_data, save_model_name
-from utils.model import Kmeans, Preprocessor
-from utils.model_nn import TrainerAE
+from utils.models import Kmeans, Preprocessor, TrainerAE
 
 
 def main():

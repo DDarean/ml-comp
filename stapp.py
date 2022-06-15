@@ -9,8 +9,7 @@ import torch
 
 from utils.data_processing import (convert_save_dataframe, gather_data,
                                    get_table_data, upload_predictions)
-from utils.model import Preprocessor
-from utils.model_nn import Autoencoder
+from utils.models import Autoencoder, Preprocessor
 
 st.markdown('### Accuracy history')
 st.markdown('For detailed stats refer page "Current statistics"')
@@ -34,8 +33,8 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 if st.button(label='Load predictions'):
     model_name = 'models/kmeans_for_ae.pkl'
     model_ae_name = 'models/AEmodel'
-    vectorizer_meta = f'models/vectorizers/vectorizer_meta_for_ae.pkl'
-    vectorizer_vector = f'models/vectorizers/vectorizer_vector_for_ae.pkl'
+    vectorizer_meta = 'models/vectorizers/vectorizer_meta_for_ae.pkl'
+    vectorizer_vector = 'models/vectorizers/vectorizer_vector_for_ae.pkl'
 
     if num_iter and num_vectors:
         num_iter = int(num_iter)
