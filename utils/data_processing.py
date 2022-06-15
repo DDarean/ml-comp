@@ -80,7 +80,9 @@ def upload_predictions(df):
 
 
 def save_vector(vector):
-    engine = create_engine("sqlite+pysqlite:///test_data/db.sqlite")
+    load_dotenv()
+    db_path = os.getenv('DB_PATH')
+    engine = create_engine(f'sqlite+pysqlite:///{db_path}')
     metadata_obj = MetaData()
     user_table = Table("vectors", metadata_obj, autoload_with=engine)
     stmt = insert(user_table).values(**vector)
@@ -89,7 +91,9 @@ def save_vector(vector):
 
 
 def save_statistics():
-    engine = create_engine("sqlite+pysqlite:///test_data/db.sqlite")
+    load_dotenv()
+    db_path = os.getenv('DB_PATH')
+    engine = create_engine(f'sqlite+pysqlite:///{db_path}')
     metadata_obj = MetaData()
     user_table = Table("stats", metadata_obj, autoload_with=engine)
 
@@ -109,7 +113,9 @@ def save_statistics():
 
 
 def get_table_data(table_name):
-    engine = create_engine("sqlite+pysqlite:///test_data/db.sqlite")
+    load_dotenv()
+    db_path = os.getenv('DB_PATH')
+    engine = create_engine(f'sqlite+pysqlite:///{db_path}')
     metadata_obj = MetaData()
     user_table = Table(table_name, metadata_obj, autoload_with=engine)
     stmt = (select(user_table).order_by(user_table.c.id.asc()))
@@ -119,7 +125,9 @@ def get_table_data(table_name):
 
 
 def save_model_name(model_name, num_of_vectors=0):
-    engine = create_engine("sqlite+pysqlite:///test_data/db.sqlite")
+    load_dotenv()
+    db_path = os.getenv('DB_PATH')
+    engine = create_engine(f'sqlite+pysqlite:///{db_path}')
     metadata_obj = MetaData()
     user_table = Table("models", metadata_obj, autoload_with=engine)
     stmt = insert(user_table).values(model_name=model_name,
