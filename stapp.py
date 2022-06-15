@@ -18,6 +18,12 @@ model_path = os.getenv('MODEL_PATH')
 vectorizer_path = os.getenv('VECTORIZER_PATH')
 model_name = os.getenv('DEFAULT_MODEL_NAME')
 
+if not os.path.exists(model_path):
+    os.makedirs(model_path)
+
+if not os.path.exists(vectorizer_path):
+    os.makedirs(vectorizer_path)
+
 st.markdown('### Accuracy history')
 st.markdown('For detailed stats refer page "Current statistics"')
 

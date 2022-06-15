@@ -13,7 +13,7 @@ model_name = os.getenv('DEFAULT_MODEL_NAME')
 
 def main():
     st.markdown("### Train model")
-
+    epochs = st.text_input('Enter number of epochs for autoencoder training (1-2 is recommended for demo)', value=1)
     if st.button(label='Train on the latest data'):
         model = Kmeans()
         preprocessor = Preprocessor()
@@ -23,7 +23,7 @@ def main():
         data_transformed = preprocessor.transform_data(data)
         model_ae = TrainerAE(data_transformed)
         with st.spinner('Training autoencoder'):
-            model_ae.fit_save_model(num_of_vectors=data.shape[0])
+            model_ae.fit_save_model(epochs=epochs, num_of_vectors=data.shape[0])
         st.write('AE trained')
         with st.spinner('Training KMeans classifier'):
             model.fit_save_model(model_ae.encode(data_transformed))
