@@ -2,7 +2,7 @@ import pandas as pd
 import streamlit as st
 
 from utils.data_processing import get_table_data, save_model_name
-from utils.model import Kmeans
+from utils.models import Kmeans, Preprocessor, TrainerAE
 
 
 def main():
@@ -10,9 +10,15 @@ def main():
 
     if st.button(label='Train on the latest data'):
         model = Kmeans()
+        preprocessor = Preprocessor()
         data = get_table_data('vectors')
-        df = pd.DataFrame(data)
-        model.fit_save_model(df)
+        data = pd.DataFrame(data)
+        preprocessor.fit_save_vectorizers(data)
+        data = preprocessor.transform_data(data)
+        model_ae = TrainerAE(data)
+        model_ae.fit_save_model()
+        st.write('AE trained')
+        model.fit_save_model(model_ae.encode(data), modelname='AE+KMeans')
         save_model_name(model.model_name)
         st.write('Model retrained and saved in "models" folder')
 
