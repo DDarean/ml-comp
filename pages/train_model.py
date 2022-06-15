@@ -13,7 +13,7 @@ model_name = os.getenv('DEFAULT_MODEL_NAME')
 
 def main():
     st.markdown("### Train model")
-    epochs = st.text_input('Enter number of epochs for autoencoder training (1-2 is recommended for demo)', value=1)
+    epochs = int(st.text_input('Enter number of epochs for autoencoder training (1-2 is recommended for demo)', value=1))
     if st.button(label='Train on the latest data'):
         model = Kmeans()
         preprocessor = Preprocessor()
